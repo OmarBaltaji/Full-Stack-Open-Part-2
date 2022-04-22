@@ -1,3 +1,3 @@
-const Header = ({ course }) => <h1>{course}</h1>
+const Header = ({ courseName }) => <h2>{courseName}</h2>
 
 export default Header;
