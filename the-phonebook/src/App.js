@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import Filter from './components/Filter';
+import Persons from './components/Persons';
+import FormPerson from './components/FormPerson';
 
 function App() {
   const [persons, setPersons] = useState([
@@ -58,6 +61,7 @@ function App() {
 
   const handleSearchOnChange = (event) => {
     const filterTextToLowerCase = event.target.value.toLowerCase(); 
+    console.log(filterTextToLowerCase);
     setFilterText(filterTextToLowerCase);
     const filteredArray = persons.filter(person => {
       let personName = person.name.toLowerCase();
@@ -81,27 +85,11 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        <span>filter shown with </span>
-        <input value={filterText} onChange={handleSearchOnChange} />
-      </div>
+      <Filter filterText={filterText} onChange={handleSearchOnChange} />
       <h2>Add a new</h2>
-      <form onSubmit={handleOnSubmit}>
-        <div>
-          name: <input value={newName} onChange={(event) => handleOnChange(event, 'name')} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={(event) => handleOnChange(event, 'number')} />
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <FormPerson onSubmit={handleOnSubmit} newName={newName} newNumber={newNumber} onChange={handleOnChange} />
       <h2>Numbers</h2>
-
-      <div>
-        {showAllOrFiltered()}
-      </div>
+      <Persons persons={showAllOrFiltered()} />
     </div>
   );
 }
