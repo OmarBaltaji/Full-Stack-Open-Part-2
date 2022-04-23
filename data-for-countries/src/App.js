@@ -23,6 +23,30 @@ function App() {
     }
   }
 
+  const countryDetails = (country) => (
+    <>
+      <h2>{country.name.common}</h2>
+      <div>capital {country.capital}</div>
+      <div>area {country.area}</div>
+      <h4>languages:</h4>
+      <ul>
+        {Object.entries(country.languages).map((lang) => <li key={lang[0]}>{lang[1]}</li>)}
+      </ul>
+      <div>
+        <img src={country.flags.png} alt="country's flag" />
+      </div>
+    </>
+  );
+
+  const showMoreDetails = (code) => {
+    const element = document.getElementById(code);
+    if(element.style.display === 'none') {
+      element.style.display = 'block';
+    } else {
+      element.style.display = 'none';
+    }
+  };
+
   return (
     <div>
       <div>
@@ -35,18 +59,9 @@ function App() {
         <span>No countries found</span>
         :
         (filteredCountries.length === 1 ?
-          filteredCountries.map(country => 
+          filteredCountries.map(country =>
             <div key={country.cca2}>
-              <h2>{country.name.common}</h2>
-              <div>capital {country.capital}</div>
-              <div>area {country.area}</div>
-              <h4>languages:</h4>
-              <ul>
-                {Object.entries(country.languages).map((lang) => <li key={lang[0]}>{lang[1]}</li>)}
-              </ul>
-              <div>
-                <img src={country.flags.png} alt="country's flag" />
-              </div>
+              {countryDetails(country)}
             </div>
           )
           :
@@ -54,7 +69,16 @@ function App() {
             ? 
             <span>Too many matches, specify another filter</span>
             :
-            filteredCountries.map(country => <div key={country.cca2}>{country.name.common}</div>)
+            filteredCountries.map(country => 
+              <div key={country.cca2}>
+                {country.name.common} &nbsp;
+                <button onClick={() => showMoreDetails(country.cca2)}>Show</button>
+                <div id={country.cca2} style={{ display: "none" }}>
+                  {countryDetails(country)}
+                </div> 
+                <br />
+              </div>
+            )
           )
         )
       }
