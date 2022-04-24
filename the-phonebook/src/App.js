@@ -33,19 +33,27 @@ function App() {
     }
 
     const foundPerson = persons.find(person => person.name === newName);
+    const newPersonNameWithNumber = newPersonObject.name.toLowerCase() + ' ' + newPersonObject.number;
+
     if(foundPerson) {
-      alert(`${newName} is already added to phonebook`);
-      return null;
-    }
-    personsService.create(newPersonObject).then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson));
-
-      const newPersonNameWithNumber = returnedPerson.name.toLowerCase() + ' ' + returnedPerson.number;
-
-      if(filterText && newPersonNameWithNumber.includes(filterText)) {
-        setFilteredPersons(filteredPersons.concat(returnedPerson));
+      if(window.confirm(`${foundPerson.name} is already added to phonebook, replace old number with a new one?`)) {
+        personsService.update(foundPerson.id, newPersonObject).then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== foundPerson.id ? person : returnedPerson));
+      
+          if(filterText && newPersonNameWithNumber.includes(filterText)) {
+            setFilteredPersons(filteredPersons.map(person => person.id !== foundPerson.id ? person : returnedPerson));
+          }
+        });
       }
-    }); 
+    } else {
+      personsService.create(newPersonObject).then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+    
+        if(filterText && newPersonNameWithNumber.includes(filterText)) {
+          setFilteredPersons(filteredPersons.concat(returnedPerson));
+        }
+      });
+    } 
   }
 
   const handleOnChange = (event, source) => {
