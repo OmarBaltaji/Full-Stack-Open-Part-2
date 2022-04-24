@@ -39,14 +39,15 @@ function App() {
       alert(`${newName} is already added to phonebook`);
       return null;
     }
+    axios.post('http://localhost:3001/persons', newPersonObject).then(res => {
+      setPersons(persons.concat(res.data));
 
-    setPersons(persons.concat(newPersonObject));
+      const newPersonNameWithNumber = res.data.name.toLowerCase() + ' ' + res.data.number;
 
-    const newPersonNameWithNumber = newPersonObject.name.toLowerCase() + ' ' + newPersonObject.number;
-
-    if(filterText && newPersonNameWithNumber.includes(filterText)) {
-      setFilteredPersons(filteredPersons.concat(newPersonObject));
-    }
+      if(filterText && newPersonNameWithNumber.includes(filterText)) {
+        setFilteredPersons(filteredPersons.concat(res.data));
+      }
+    }); 
   }
 
   const handleOnChange = (event, source) => {
