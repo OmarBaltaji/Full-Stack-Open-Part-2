@@ -77,12 +77,25 @@ function App() {
     return filterText ? filteredPersons.map(person => 
       <div key={person.id}>
         {person.name} {person.number}
+        <button onClick={() => onDeleteHandler(person)}>delete</button>
       </div>)
     : persons.map(person => 
       <div key={person.id}>
         {person.name} {person.number}
+        <button onClick={() => onDeleteHandler(person)}>delete</button>
       </div>)
   }
+
+  const onDeleteHandler = (selectedPerson) => {
+    if(window.confirm(`Delete ${selectedPerson.name}`)) {
+      personsService.deletePerson(selectedPerson.id).then(status => {
+        if(status === 200) {
+          setFilteredPersons(filteredPersons.filter(person => person.id !== selectedPerson.id));
+          setPersons(persons.filter(person => person.id !== selectedPerson.id));
+        }
+      });
+    }
+  } 
 
   return (
     <div>
