@@ -3,6 +3,8 @@ import Filter from './components/Filter';
 import Persons from './components/Persons';
 import FormPerson from './components/FormPerson';
 import personsService from './services/persons';
+import './index.css'
+import Feedback from './components/Feedback';
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -10,6 +12,8 @@ function App() {
   const [newNumber, setNewNumber] = useState('');
   const [filteredPersons, setFilteredPersons] = useState([]);
   const [filterText, setFilterText] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState(null);
+  const [feedbackType, setFeedbackType] = useState('');
  
   useEffect(() => {
     personsService.getAll().then(personsList => {
@@ -43,6 +47,10 @@ function App() {
           if(filterText && newPersonNameWithNumber.includes(filterText)) {
             setFilteredPersons(filteredPersons.map(person => person.id !== foundPerson.id ? person : returnedPerson));
           }
+
+          setFeedbackMessage(`Updated the number of ${foundPerson.name}`);
+          setFeedbackType('success');
+          setTimeout(() => setFeedbackMessage(null), 5000);
         });
       }
     } else {
@@ -52,6 +60,10 @@ function App() {
         if(filterText && newPersonNameWithNumber.includes(filterText)) {
           setFilteredPersons(filteredPersons.concat(returnedPerson));
         }
+
+        setFeedbackMessage(`Added ${returnedPerson.name}`);
+        setFeedbackType('success');
+        setTimeout(() => setFeedbackMessage(null), 5000);
       });
     } 
   }
@@ -108,6 +120,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Feedback type={feedbackType} message={feedbackMessage} />
       <Filter filterText={filterText} onChange={handleSearchOnChange} />
       <h2>Add a new</h2>
       <FormPerson onSubmit={handleOnSubmit} newName={newName} newNumber={newNumber} onChange={handleOnChange} />
