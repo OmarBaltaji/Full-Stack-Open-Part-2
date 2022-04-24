@@ -51,6 +51,10 @@ function App() {
           setFeedbackMessage(`Updated the number of ${foundPerson.name}`);
           setFeedbackType('success');
           setTimeout(() => setFeedbackMessage(null), 5000);
+        }).catch(error => {
+          setFeedbackMessage(`Information of ${foundPerson.name} has already been removed from server`);
+          setFeedbackType('error');
+          setTimeout(() => setFeedbackMessage(null), 5000);
         });
       }
     } else {
