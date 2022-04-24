@@ -5,12 +5,12 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
   const [weatherInfo, setWeatherInfo] = useState({});
+  const [weatherInfoCalled, setWeatherInfoCalled] = useState(false);
   const api_key = process.env.REACT_APP__WEATHER_API_KEY;
 
   useEffect(() => {
     axios.get('https://restcountries.com/v3.1/all')
     .then(res => {
-      console.log(res.data);
       setCountries(res.data);
     });
   }, []);
@@ -23,6 +23,7 @@ function App() {
     if(!typedCountryLowerCase) {
       setFilteredCountries([]);
     }
+    setWeatherInfoCalled(false);
   }
 
   const commonCountryDetails = (country) => (
@@ -50,11 +51,13 @@ function App() {
   };
 
   const getWeatherInfo = (capitalCoordinates) => {
-    axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${capitalCoordinates[0]}&lon=${capitalCoordinates[1]}&appid=${api_key}&units=metric`)
-    .then(res => {
-      console.log(res.data);
-      setWeatherInfo(res.data);
-    });
+    if(!weatherInfoCalled) {
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${capitalCoordinates[0]}&lon=${capitalCoordinates[1]}&appid=${api_key}&units=metric`)
+      .then(res => {
+        setWeatherInfo(res.data);
+        setWeatherInfoCalled(true);
+      });
+    }
   }
 
   return (
