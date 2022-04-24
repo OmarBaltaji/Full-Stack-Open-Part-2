@@ -4,6 +4,8 @@ import axios from "axios";
 function App() {
   const [countries, setCountries] = useState([]);
   const [filteredCountries, setFilteredCountries] = useState([]);
+  const [weatherInfo, setWeatherInfo] = useState({});
+  const api_key = process.env.REACT_APP__WEATHER_API_KEY;
 
   useEffect(() => {
     axios.get('https://restcountries.com/v3.1/all')
@@ -23,7 +25,7 @@ function App() {
     }
   }
 
-  const countryDetails = (country) => (
+  const commonCountryDetails = (country) => (
     <>
       <h2>{country.name.common}</h2>
       <div>capital {country.capital}</div>
@@ -47,6 +49,14 @@ function App() {
     }
   };
 
+  const getWeatherInfo = (capitalCoordinates) => {
+    axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${capitalCoordinates[0]}&lon=${capitalCoordinates[1]}&appid=${api_key}&units=metric`)
+    .then(res => {
+      console.log(res.data);
+      setWeatherInfo(res.data);
+    });
+  }
+
   return (
     <div>
       <div>
@@ -61,7 +71,21 @@ function App() {
         (filteredCountries.length === 1 ?
           filteredCountries.map(country =>
             <div key={country.cca2}>
-              {countryDetails(country)}
+              {commonCountryDetails(country)}
+              <h2>Weather in {country.capital}</h2>
+              {getWeatherInfo(country.capitalInfo.latlng)}
+              {
+                weatherInfo && Object.keys(weatherInfo).length > 0 ? 
+                  <div>
+                    <span>temperature {weatherInfo.main.temp} Celcius</span>
+                    <div>
+                      <img src={`http://openweathermap.org/img/wn/${weatherInfo.weather[0].icon}@2x.png`} alt="weather icon" />
+                    </div>
+                    <span>wind {weatherInfo.wind.speed} m/s</span>
+                  </div>
+                :
+                null
+              }
             </div>
           )
           :
@@ -74,7 +98,7 @@ function App() {
                 {country.name.common} &nbsp;
                 <button onClick={() => showMoreDetails(country.cca2)}>Show</button>
                 <div id={country.cca2} style={{ display: "none" }}>
-                  {countryDetails(country)}
+                  {commonCountryDetails(country)}
                 </div> 
                 <br />
               </div>
