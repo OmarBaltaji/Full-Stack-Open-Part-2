@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Filter from './components/Filter';
 import Persons from './components/Persons';
 import FormPerson from './components/FormPerson';
-import axios from 'axios';
+import personsService from './services/persons';
 
 function App() {
   const [persons, setPersons] = useState([]);
@@ -12,10 +12,8 @@ function App() {
   const [filterText, setFilterText] = useState('');
  
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(res => {
-      setPersons(res.data);
+    personsService.getAll().then(personsList => {
+      setPersons(personsList);
     });
   }, []);
 
@@ -39,13 +37,13 @@ function App() {
       alert(`${newName} is already added to phonebook`);
       return null;
     }
-    axios.post('http://localhost:3001/persons', newPersonObject).then(res => {
-      setPersons(persons.concat(res.data));
+    personsService.create(newPersonObject).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson));
 
-      const newPersonNameWithNumber = res.data.name.toLowerCase() + ' ' + res.data.number;
+      const newPersonNameWithNumber = returnedPerson.name.toLowerCase() + ' ' + returnedPerson.number;
 
       if(filterText && newPersonNameWithNumber.includes(filterText)) {
-        setFilteredPersons(filteredPersons.concat(res.data));
+        setFilteredPersons(filteredPersons.concat(returnedPerson));
       }
     }); 
   }
